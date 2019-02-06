@@ -1,0 +1,1 @@
+java aa.project.Main
