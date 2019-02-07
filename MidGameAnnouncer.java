@@ -19,9 +19,8 @@ public class MidGameAnnouncer implements Runnable {
                 gct.suspend();
             }
             
-            System.out.println("\n******* Announcer is collating information ********");
             try {
-                String prt = "";
+                String prt = "\nMidGameAnnouncer BREAK\n******* Announcer is collating information ********\n\n";
                 for(int j = 0; j < 5; j++) {
                     GameCharacter temp1 = playerThreads.get(j).getCharacter();
                     GameCharacter temp2 = playerThreads.get(j + 5).getCharacter();

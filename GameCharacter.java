@@ -15,6 +15,7 @@ public abstract class GameCharacter{
     private ReentrantReadWriteLock powerLocks = new ReentrantReadWriteLock();
     private ReentrantReadWriteLock manaLocks = new ReentrantReadWriteLock();
 
+    // Read Write Locks for all attributes
     private Lock healthRead = healthLocks.readLock();
     private Lock healthWrite = healthLocks.writeLock();
     private Lock powerRead = powerLocks.readLock();
@@ -73,6 +74,7 @@ public abstract class GameCharacter{
         return teamNumber;
     }
 
+    // Increases the Attacking Power of the Character
     public void increasePower(int incAmount) {
         powerWrite.lock();
         try {
@@ -82,6 +84,7 @@ public abstract class GameCharacter{
         }
     }
 
+    // Increases the Health of the Character
     public void increaseHealth(int incAmount) {
         healthWrite.lock();
         try {
@@ -91,6 +94,7 @@ public abstract class GameCharacter{
         }
     }
 
+    // Increases the Mana of the Character
     public void increaseMana(int incAmount) {
         manaWrite.lock();
         try {
@@ -100,7 +104,7 @@ public abstract class GameCharacter{
         }
     }
     
-   // public method which is used by the subclass when getting attacked.
+   // Character Receives Damage and loses health
     public void receiveDamage(int attackPower) {
         healthWrite.lock();
         try {
@@ -110,6 +114,7 @@ public abstract class GameCharacter{
         }
     }
 
+    // Reduces Mana every time a move is made
     public void useMana(int attackType) {
         if(attackType == 1) {
             manaWrite.lock();
@@ -130,6 +135,8 @@ public abstract class GameCharacter{
 
     // Implemented by the subclasses of Character due to different characteristics of Attack
     public abstract void attack(GameCharacter other);
+    // Implemented by the subclasses of Character due to different characteristics of SpecialAttack
     public abstract void specialAttack(List<GameCharacter>others);
+    // Implemented by the subclasses of Character due to different String Output
     public abstract String toString();
 }
