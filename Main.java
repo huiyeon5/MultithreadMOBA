@@ -5,6 +5,15 @@ import java.util.*;
 import aa.project.supers.GameCharacter;
 
 public class Main{
+
+    // Default Configurations of Characters
+    private static final int INIT_HEALTH = 1000;
+    private static final int TANK_HEALTH = 1200;
+    private static final int INIT_MANA = 100;
+    private static final int HEALER_MANA = 120;
+    private static final int INIT_POWER = 5;
+    private static final int HEALER_POWER = 20;
+
     public static void main(String[] args) throws InterruptedException {
         int NUM_CHAR = 10; // Total number of Characters on Field
 
@@ -34,7 +43,7 @@ public class Main{
         }
         
         // Create Mid Game Announcer Thread
-        Thread mga = new Thread(new MidGameAnnouncer(gameCharacterThreadList));
+        Thread mga = new Thread(new MidGameAnnouncer(gameCharacterThreadList, INIT_HEALTH));
         mga.start();
         
         // Start All Threads
@@ -54,7 +63,7 @@ public class Main{
         for (int k = 0; k < NUM_CHAR/2; k++) {
             GameCharacter temp1 = players[k];
             GameCharacter temp2 = players[k + (NUM_CHAR/2)];
-            prt += temp1.toString() + "\t\t" + temp2.toString() + "\nHealth: " + temp1.getHealth() + "\t\t" + "Health: " + temp2.getHealth() + "\nAttack Power: " + temp1.getAttackPower() + "\t" + "Attack Power: " + temp2.getAttackPower() + "\nMana: " + temp1.getMana() + "\t\t" + "Mana: " + temp2.getMana() + "\n\n";
+            prt += temp1.toString() + "\t\t" + temp2.toString() + "\nHealth: " + temp1.getHealth() + "\t\t" + "Health: " + temp2.getHealth() + "\nAttack Power: " + temp1.getAttackPower() + "\t" + "Attack Power: " + temp2.getAttackPower() + "\nMana: " + temp1.getMana() + "\t\t" + "Mana: " + temp2.getMana() + "\nDead: " + (temp1.isDead() ? "DEAD" : "ALIVE") + "\t\tDead: " + (temp2.isDead() ? "DEAD" : "ALIVE") + "\n\n";
         }
         System.out.println(prt);
 
@@ -100,15 +109,6 @@ public class Main{
 
     // Function to make the team
     private static GameCharacter[] makeTeam(int players, int teamNum) {
-        
-        // Default Configurations of Characters
-        final int INIT_HEALTH = 1000;
-        final int TANK_HEALTH = 1200;
-        final int INIT_MANA = 100;
-        final int HEALER_MANA = 120;
-        final int INIT_POWER = 5;
-        final int HEALER_POWER = 20;
-
         GameCharacter[] plyer = new GameCharacter[players];
         
         GameCharacter healer = new Healer(INIT_HEALTH, HEALER_POWER, HEALER_MANA, teamNum);

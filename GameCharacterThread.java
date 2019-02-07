@@ -12,7 +12,6 @@ public class GameCharacterThread implements Runnable {
     private boolean suspended = false;
 
     // run
-
     public GameCharacterThread(GameCharacter[] players, int currentPlayer) {
         this.currentPlayer = currentPlayer;
         this.players = players;
@@ -23,7 +22,11 @@ public class GameCharacterThread implements Runnable {
     @Override
     public void run() {
         Random r = ThreadLocalRandom.current();
-        for(int i = 0; i < ACTION_COUNT; i++) {
+        while(!currCharacter.isDead()) {
+
+            if(allDead(currCharacter.getTeamNumber())) {
+                break;
+            }
             int percent = r.nextInt(10) + 1;
             synchronized(this) {
                 while(suspended) {
@@ -36,117 +39,157 @@ public class GameCharacterThread implements Runnable {
             }
             if(currCharacter instanceof Attacker) {
                 if(percent <= 8) {
-                    ArrayList<GameCharacter> opponents = getOpponents(1, r);
+                    ArrayList<GameCharacter> opponents = getOpponents(true, r);
+                    if(opponents.size() == 0 || opponents == null) {
+                        break;
+                    }
                     currCharacter.attack(opponents.get(0));
                     System.out.println(printNormal(opponents.get(0)));
                 } else {
-                    ArrayList<GameCharacter> opponents = getOpponents(5,r);
+                    ArrayList<GameCharacter> opponents = getOpponents(false,r);
+                    if(opponents.size() == 0 || opponents == null) {
+                        break;
+                    }
                     currCharacter.specialAttack(opponents);
                     System.out.println(printSpecial(opponents));
                 }
             } else if(currCharacter instanceof Healer) {
                 if(percent <= 8) {
-                    ArrayList<GameCharacter> opponents = getTeam(1, r);
+                    ArrayList<GameCharacter> opponents = getTeam(true, r);
                     currCharacter.attack(opponents.get(0));
                     System.out.println(printNormal(opponents.get(0)));
                 } else {
-                    ArrayList<GameCharacter> opponents = getTeam(4,r);
+                    ArrayList<GameCharacter> opponents = getTeam(false,r);
                     currCharacter.specialAttack(opponents);
                     System.out.println(printSpecial(opponents));
                 }
             } else {
                 if(percent <= 8) {
-                    ArrayList<GameCharacter> opponents = getOpponents(1, r);
+                    ArrayList<GameCharacter> opponents = getOpponents(true, r);
+                    if(opponents.size() == 0 || opponents == null) {
+                        break;
+                    }
                     currCharacter.attack(opponents.get(0));
                     System.out.println(printNormal(opponents.get(0)));
                 } else {
-                    ArrayList<GameCharacter> opponents = getTeam(4,r);
+                    ArrayList<GameCharacter> opponents = getTeam(false,r);
                     currCharacter.specialAttack(opponents);
                     System.out.println(printSpecial(opponents));
                 }
+            }
+
+            if(currCharacter.getHealth() <= 0) {
+                currCharacter.die();
             }
         }
 
         // System.out.println("\n" +currCharacter.toString() + " Done with all Attacks\n");
     }
 
-    private ArrayList<GameCharacter> getOpponents(int numOpp, Random r) {
+    private ArrayList<GameCharacter> getOpponents(boolean one, Random r) {
         ArrayList<GameCharacter> chars = new ArrayList<>();
-        
+
         int i = 0;
         if(currCharacter.getTeamNumber() == 0) {
-            if(numOpp == 1) {
+            if(one) {
                 int rand = r.nextInt(5) + 5;
+
+                while(players[rand].isDead()) {
+                    rand = r.nextInt(5) + 5;
+                }
+
                 chars.add(players[rand]);
                 return chars;
             } else {
-                int[] arr = {5,6,7,8,9};
+                int[] arr = new int[players.length/2];
+                int c = 0;
+                for(int j = players.length/2; j < players.length; j++) {
+                    arr[c] = j;
+                    c++;
+                }
                 shuffleArray(arr);
-                while(i < numOpp) {
+                while(i < arr.length) {
                     int num = arr[i];
-                    if(num != currentPlayer) {
+                    if(!players[num].isDead()) {
                         chars.add(players[num]);
                     }
                     i++;
                 }
+
+                return chars;
             }
         } else {
-            if(numOpp == 1) {
+            if(one) {
                 int rand = r.nextInt(5);
-                chars.add(players[rand]);
-                return chars;
-            } else {
-                int[] arr = {0,1,2,3,4};
-                shuffleArray(arr);
-                while(i < numOpp) {
-                    int num = arr[i];
-                    if(num != currentPlayer) {
-                        chars.add(players[num]);
-                    }
-                    i++;
-                }
-            }
-        }
-
-        return chars;
-    }
-
-    private ArrayList<GameCharacter> getTeam(int numOpp, Random r) {
-        ArrayList<GameCharacter> chars = new ArrayList<>();
-        int i = 0;
-        if(currCharacter.getTeamNumber() == 0) {
-            if(numOpp == 1) {
-                int rand = r.nextInt(5);
-                while(rand == currentPlayer) {
+                while(players[rand].isDead()) {
                     rand = r.nextInt(5);
                 }
                 chars.add(players[rand]);
                 return chars;
             } else {
-                int[] arr = {0,1,2,3,4};
+                int[] arr = new int[players.length/2];
+                for(int j = 0; j < players.length/2; j++) {
+                    arr[j] = j;
+                }
                 shuffleArray(arr);
-                while(i < numOpp) {
+                while(i < arr.length) {
                     int num = arr[i];
-                    if(num != currentPlayer) {
+                    if(!players[num].isDead()) {
+                        chars.add(players[num]);
+                    }
+                    i++;
+                }
+                return chars;
+            }
+        }
+
+    }
+
+    private ArrayList<GameCharacter> getTeam(boolean one, Random r) {
+        ArrayList<GameCharacter> chars = new ArrayList<>();
+        int i = 0;
+
+        if(currCharacter.getTeamNumber() == 0) {
+            if(one) {
+                int rand = r.nextInt(5);
+                while(players[rand].isDead()) {
+                    rand = r.nextInt(5);
+                }
+                chars.add(players[rand]);
+                return chars;
+            } else {
+                int[] arr = new int[players.length/2];
+                for(int j = 0; j < players.length/2; j++) {
+                    arr[j] = j;
+                }
+                shuffleArray(arr);
+                while(i < arr.length) {
+                    int num = arr[i];
+                    if(!players[num].isDead()) {
                         chars.add(players[num]);
                     }
                     i++;
                 }
             }
         } else {
-            if(numOpp == 1) {
+            if(one) {
                 int rand = r.nextInt(5) + 5;
-                while(rand == currentPlayer) {
+                while(players[rand].isDead()) {
                     rand = r.nextInt(5) + 5;
                 }
                 chars.add(players[rand]);
                 return chars;
             } else {
-                int[] arr = {5,6,7,8,9};
+                int[] arr = new int[players.length/2];
+                int c = 0;
+                for(int j = players.length/2; j < players.length; j++) {
+                    arr[c] = j;
+                    c++;
+                }
                 shuffleArray(arr);
-                while(i < numOpp) {
+                while(i < arr.length) {
                     int num = arr[i];
-                    if(num != currentPlayer) {
+                    if(!players[num].isDead()) {
                         chars.add(players[num]);
                     }
                     i++;
@@ -167,6 +210,25 @@ public class GameCharacterThread implements Runnable {
             ar[index] = ar[i];
             ar[i] = a;
         }
+    }
+
+    private boolean allDead(int team) {
+        if(team == 0) {
+            for(int i = players.length/2; i < players.length; i++) {
+                if(!players[i].isDead()) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            for(int i = 0; i < players.length/2; i++) {
+                if(!players[i].isDead()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
     }
     
     private String printNormal(GameCharacter opponent) {

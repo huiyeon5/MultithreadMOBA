@@ -1,14 +1,15 @@
 package aa.project;
+
 import java.util.*;
-
-
 import aa.project.supers.GameCharacter;
 
 public class Healer extends GameCharacter {
+    private int healthIncrease;
 
     // Constructor for Healers
     public Healer(int health, int attackPower, int mana, int teamNumber) {
         super(health, attackPower, mana,teamNumber);
+        this.healthIncrease = 5;
     }
 
     // Increases Mana of Single Player of the SAME team
@@ -22,7 +23,7 @@ public class Healer extends GameCharacter {
     @Override
     public void specialAttack(List<GameCharacter> others) {
         for(GameCharacter gc : others) {
-            gc.increaseHealth(attackPower);
+            gc.increaseHealth(healthIncrease);
         }
         this.useMana(2);
     }

@@ -8,7 +8,7 @@ public abstract class GameCharacter{
     protected int attackPower;
     protected int teamNumber;
     protected int mana;
-    // public boolean isDead;
+    protected boolean dead;
 
     // Using 3 Locks (1 for Health, 1 for Power, 1 for Mana) for maximum Liveness
     private ReentrantReadWriteLock healthLocks = new ReentrantReadWriteLock();
@@ -29,6 +29,7 @@ public abstract class GameCharacter{
         this.attackPower = attackPower;
         this.teamNumber = teamNumber;
         this.mana = mana;
+        this.dead = false;
     }
 
     /**
@@ -72,6 +73,13 @@ public abstract class GameCharacter{
      */
     public int getTeamNumber() {
         return teamNumber;
+    }
+
+    /**
+     * @return if Character is dead or not
+     */
+    public synchronized boolean isDead() {
+        return dead;
     }
 
     // Increases the Attacking Power of the Character
@@ -131,6 +139,10 @@ public abstract class GameCharacter{
                 manaWrite.unlock();
             }
         }
+    }
+
+    public synchronized void die() {
+        this.dead = true;
     }
 
     // Implemented by the subclasses of Character due to different characteristics of Attack

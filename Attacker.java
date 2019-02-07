@@ -1,6 +1,6 @@
 package aa.project;
-import java.util.*;
 
+import java.util.*;
 import aa.project.supers.GameCharacter;
 
 public class Attacker extends GameCharacter {

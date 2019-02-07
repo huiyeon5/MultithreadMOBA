@@ -6,10 +6,11 @@ import aa.project.supers.GameCharacter;
 
 public class MidGameAnnouncer implements Runnable {
     private ArrayList<GameCharacterThread> playerThreads;
-    private final int NUM_ANNOUNCEMENTS = 5;
+    private final int NUM_ANNOUNCEMENTS;
 
-    public MidGameAnnouncer(ArrayList<GameCharacterThread> playerThreads) {
+    public MidGameAnnouncer(ArrayList<GameCharacterThread> playerThreads, int INIT_HEALTH) {
         this.playerThreads = playerThreads;
+        this.NUM_ANNOUNCEMENTS = (int)Math.log10(INIT_HEALTH) + 5;
     }
 
     @Override
@@ -31,12 +32,12 @@ public class MidGameAnnouncer implements Runnable {
                 
                 
                 System.out.println("******* Let the games begin again! ********\n");
-                
+                Thread.sleep(1500);
                 for(GameCharacterThread gct: playerThreads) {
                     gct.resume();
                 }
 
-                Thread.sleep(50);
+                Thread.sleep(100);
             } catch(InterruptedException e) {
 
             }
