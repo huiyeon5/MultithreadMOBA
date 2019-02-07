@@ -1,4 +1,4 @@
-package aa.project;
+package aa.project.character;
 
 import java.util.*;
 import aa.project.supers.GameCharacter;
@@ -13,7 +13,7 @@ public class Attacker extends GameCharacter {
     // Attacks Single Player of the other team
     @Override
     public void attack(GameCharacter other) {
-        other.receiveDamage(attackPower);
+        other.receiveDamage(this.getAttackPower());
         this.useMana(1);
     }
     
@@ -21,7 +21,7 @@ public class Attacker extends GameCharacter {
     @Override
     public void specialAttack(List<GameCharacter> others) {
         for(GameCharacter gc : others) {
-            gc.receiveDamage(attackPower);
+            gc.receiveDamage(this.getAttackPower());
         }
         this.useMana(2);
     }
@@ -29,6 +29,6 @@ public class Attacker extends GameCharacter {
     // String Representation of Attacker
     @Override
     public String toString() {
-        return "Team " + (teamNumber + 1) + " Attacker";
+        return "Team " + (this.getTeamNumber() + 1) + " Attacker";
     }
 }

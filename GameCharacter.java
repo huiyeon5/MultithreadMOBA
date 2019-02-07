@@ -4,11 +4,11 @@ import java.util.concurrent.locks.*;
 
 // Super Class for all the Characters in the game.
 public abstract class GameCharacter{
-    protected int health;
-    protected int attackPower;
-    protected int teamNumber;
-    protected int mana;
-    protected boolean dead;
+    private int health;
+    private int attackPower;
+    private int teamNumber;
+    private int mana;
+    private boolean dead;
 
     // Using 3 Locks (1 for Health, 1 for Power, 1 for Mana) for maximum Liveness
     private ReentrantReadWriteLock healthLocks = new ReentrantReadWriteLock();

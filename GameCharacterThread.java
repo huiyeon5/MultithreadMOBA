@@ -2,6 +2,7 @@ package aa.project;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import aa.project.supers.GameCharacter;
+import aa.project.character.*;
 
 // Runnable
 public class GameCharacterThread implements Runnable {
@@ -22,12 +23,17 @@ public class GameCharacterThread implements Runnable {
     @Override
     public void run() {
         Random r = ThreadLocalRandom.current();
+
+        // Run the loop until the character dies
         while(!currCharacter.isDead()) {
 
+            // Breaks the loop if all opponents are dead
             if(allDead(currCharacter.getTeamNumber())) {
                 break;
             }
             int percent = r.nextInt(10) + 1;
+
+            // Waits until notified by Midgameannouncer to finish announcing
             synchronized(this) {
                 while(suspended) {
                     try {
@@ -37,7 +43,10 @@ public class GameCharacterThread implements Runnable {
                     }
                 }
             }
+
+            // if Character is Attacker
             if(currCharacter instanceof Attacker) {
+                // 80% of the time Attacker will execute Normal Attack
                 if(percent <= 8) {
                     ArrayList<GameCharacter> opponents = getOpponents(true, r);
                     if(opponents.size() == 0 || opponents == null) {
@@ -86,18 +95,18 @@ public class GameCharacterThread implements Runnable {
         // System.out.println("\n" +currCharacter.toString() + " Done with all Attacks\n");
     }
 
-    private ArrayList<GameCharacter> getOpponents(boolean one, Random r) {
+    // Get opponents, either only ONE or many alive opponents
+    private ArrayList<GameCharacter> getOpponents(boolean one, Random r) {    
         ArrayList<GameCharacter> chars = new ArrayList<>();
-
         int i = 0;
         if(currCharacter.getTeamNumber() == 0) {
             if(one) {
                 int rand = r.nextInt(5) + 5;
-
+                
                 while(players[rand].isDead()) {
                     rand = r.nextInt(5) + 5;
                 }
-
+                
                 chars.add(players[rand]);
                 return chars;
             } else {
@@ -107,7 +116,6 @@ public class GameCharacterThread implements Runnable {
                     arr[c] = j;
                     c++;
                 }
-                shuffleArray(arr);
                 while(i < arr.length) {
                     int num = arr[i];
                     if(!players[num].isDead()) {
@@ -115,7 +123,7 @@ public class GameCharacterThread implements Runnable {
                     }
                     i++;
                 }
-
+                
                 return chars;
             }
         } else {
@@ -131,7 +139,6 @@ public class GameCharacterThread implements Runnable {
                 for(int j = 0; j < players.length/2; j++) {
                     arr[j] = j;
                 }
-                shuffleArray(arr);
                 while(i < arr.length) {
                     int num = arr[i];
                     if(!players[num].isDead()) {
@@ -142,9 +149,10 @@ public class GameCharacterThread implements Runnable {
                 return chars;
             }
         }
-
+        
     }
-
+    
+    // Get Team member, either only ONE or many alive members
     private ArrayList<GameCharacter> getTeam(boolean one, Random r) {
         ArrayList<GameCharacter> chars = new ArrayList<>();
         int i = 0;
@@ -162,7 +170,6 @@ public class GameCharacterThread implements Runnable {
                 for(int j = 0; j < players.length/2; j++) {
                     arr[j] = j;
                 }
-                shuffleArray(arr);
                 while(i < arr.length) {
                     int num = arr[i];
                     if(!players[num].isDead()) {
@@ -186,7 +193,6 @@ public class GameCharacterThread implements Runnable {
                     arr[c] = j;
                     c++;
                 }
-                shuffleArray(arr);
                 while(i < arr.length) {
                     int num = arr[i];
                     if(!players[num].isDead()) {
@@ -199,19 +205,8 @@ public class GameCharacterThread implements Runnable {
 
         return chars;
     }
-
-
-    private void shuffleArray(int[] ar) {
-        Random rnd = ThreadLocalRandom.current();
-        for (int i = ar.length - 1; i > 0; i--) {
-            int index = rnd.nextInt(i + 1);
-            // Simple swap
-            int a = ar[index];
-            ar[index] = ar[i];
-            ar[i] = a;
-        }
-    }
-
+    
+    // Method to check if all opponents are dead
     private boolean allDead(int team) {
         if(team == 0) {
             for(int i = players.length/2; i < players.length; i++) {

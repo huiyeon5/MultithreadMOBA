@@ -13,6 +13,7 @@ public class MidGameAnnouncer implements Runnable {
         this.NUM_ANNOUNCEMENTS = (int)Math.log10(INIT_HEALTH) + 5;
     }
 
+    // Annouces the Health of Players Mid game
     @Override
     public void run() {
         for(int i = 0; i < NUM_ANNOUNCEMENTS; i++) {
@@ -32,7 +33,7 @@ public class MidGameAnnouncer implements Runnable {
                 
                 
                 System.out.println("******* Let the games begin again! ********\n");
-                Thread.sleep(1500);
+                Thread.sleep(1000);
                 for(GameCharacterThread gct: playerThreads) {
                     gct.resume();
                 }

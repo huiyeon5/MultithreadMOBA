@@ -1,4 +1,4 @@
-package aa.project;
+package aa.project.character;
 
 import java.util.*;
 import aa.project.supers.GameCharacter;
@@ -15,11 +15,11 @@ public class Tank extends GameCharacter {
     // Attacks Single player of the other team
     @Override
     public void attack(GameCharacter other) {
-        other.receiveDamage(attackPower);
+        other.receiveDamage(this.getAttackPower());
         this.useMana(1);
     }
 
-    // Increases Attack power of Every player (excluding him/herself) of the SAME team.
+    // Increases Attack power of Every player of the SAME team.
     @Override
     public void specialAttack(List<GameCharacter> others) {
         for(GameCharacter gc : others) {
@@ -31,6 +31,6 @@ public class Tank extends GameCharacter {
     // String Representation of Tank
     @Override
     public String toString() {
-        return "Team " + (teamNumber + 1) + " Tank";
+        return "Team " + (this.getTeamNumber() + 1) + " Tank";
     }
 }
