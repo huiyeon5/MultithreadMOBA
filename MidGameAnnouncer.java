@@ -25,7 +25,7 @@ public class MidGameAnnouncer implements Runnable {
                 for(int j = 0; j < 5; j++) {
                     GameCharacter temp1 = playerThreads.get(j).getCharacter();
                     GameCharacter temp2 = playerThreads.get(j + 5).getCharacter();
-                    prt += temp1.toString() + "\t\t" + temp2.toString() + "\nHealth: " + temp1.getHealth() + "\t\t" + "Health: " + temp2.getHealth() + "\n";
+                    prt += temp1.toString() + "\t\t" + temp2.toString() + "\nHealth: " + temp1.getHealth() + "\t\t" + "Health: " + temp2.getHealth() + "\nDead: " + (temp1.isDead() ? "DEAD" : "ALIVE") + "\t\tDead: " + (temp2.isDead() ? "DEAD" : "ALIVE") + "\n";
                 }
                 
                 System.out.println(prt);
